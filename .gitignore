@@ -170,5 +170,8 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
+# Change for MacOS
+.DS_Store
+
 # Relevant Data Sets (don't replicate)
-data/
+data/mnist-*
