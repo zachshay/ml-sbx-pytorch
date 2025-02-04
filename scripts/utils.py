@@ -1,4 +1,5 @@
 import random
+import sys
 
 import numpy as np
 
@@ -10,7 +11,7 @@ from torchvision import datasets, transforms
 def load_data(batch_size: int,
               train_split: float = 0.8,
               data_root: str = "./data",
-              num_workers: int = 2,
+              num_workers: int = 0,
               seed: int = 42) -> tuple:
     """Loads and preprocesses MNIST data
 
@@ -74,7 +75,28 @@ def load_data(batch_size: int,
     std_dev = 0.0
     num_samples = 0
 
+    if(train_loader is None):
+        print("Why is this None?")
+        sys.exit(1)
+    else:
+        # print("Train Loader is not None.")
+        # print(f"It has a length of {len(train_loader)}")
+        # for i, (data, labels) in enumerate(train_loader):
+        #     if(i > 2):
+        #         sys.exit(1)
+        #     else:
+        #         print(f"Batch {i+1}")
+        #         print(f"Data is shaped: {data.shape}")
+        #         print(f"Labels is shape: {labels.shape}")
+        #         print(data)
+        #         print(labels)
+        pass
+
     for data, _ in train_loader:
+        # print(data)
+        # print(_)
+        # sys.exit(1)
+
         # document this batch's details
         batch_mean = data.mean()
         batch_std = data.std()
@@ -102,7 +124,7 @@ def load_data(batch_size: int,
     val_set.dataset.transform = normalization_seq
 
     # Create the test set
-    test_set = datasets.MNIS(root = "./data",
+    test_set = datasets.MNIST(root = "./data",
                              train = False,
                              download = True,
                              transform = normalization_seq)
@@ -218,7 +240,7 @@ def train_model(model: nn.Module,
             # process batches of validation data
             for inputs, labels in val_loader:
                 # move data to the right device
-                inputs, labels = inputs.to(device)
+                inputs, labels = inputs.to(device), labels.to(device)
 
                 outputs = model(inputs)             # forward pass (input -> model -> prediction)
                 loss = criterion(outputs, labels)   # calculate loss
@@ -233,7 +255,7 @@ def train_model(model: nn.Module,
             val_acc = 100 * (val_correct / val_total)   # calculate this epoch's validation accuracy
         
         # Report this epoch's critical metrics
-        print(f"Epoch [{epoch + 1} / {epoch}], "
+        print(f"Epoch [{epoch + 1} / {epochs}], "
               f"Train Loss: {train_loss: .4f}, Train Acc. {train_acc: .2f}%, "
               f"Val Loss: {val_loss: .4f}, Val Acc.: {val_acc: .2f}%")
         
@@ -258,9 +280,12 @@ def train_model(model: nn.Module,
         print("Error: train_model() -- best_model_state_dict should not be None")
         return (None, best_loss, best_acc)
     else:
+        # Adjust the model
+        model.load_state_dict(best_model_state_dict)
+
         # create the expected tuple
         tuple_toReturn = (
-                            model.load_state_dict(best_model_state_dict),
+                            model,
                             best_loss,
                             best_acc)
         
