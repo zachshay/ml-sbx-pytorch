@@ -12,7 +12,7 @@ from torchvision import datasets, transforms
 def load_data(batch_size: int,
               train_split: float = 0.8,
               data_root: str = "./data",
-              num_workers: int = 0,
+              num_workers: int = 0,         # anything other than 0 crashes
               seed: int = 42) -> tuple:
     """Loads and preprocesses MNIST data
 
