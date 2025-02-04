@@ -74,6 +74,7 @@ eleapsed_time = end_time - start_time
 torch.save(model.state_dict(), "cnn_cpu.pth")
 
 # print the final metrics
-print(f"Best Validation Loss: {best_val_loss: .4f}")
-print(f"Best Validation Accuracy: {best_val_acc: .2f}")
-print(f"Training Time: {eleapsed_time: .2f} seconds")
+print(f"Training run for CNN on CPU.")
+print(f"  * Best Validation Loss: {best_val_loss: .4f}")
+print(f"  * Best Validation Accuracy: {best_val_acc: .2f}")
+print(f"  * Training Time: {eleapsed_time: .2f} seconds")
