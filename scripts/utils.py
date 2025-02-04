@@ -3,6 +3,7 @@ import random
 import numpy as np
 
 import torch
+import torch.nn as nn
 from torch.utils.data import DataLoader, random_split
 from torchvision import datasets, transforms
 
@@ -146,5 +147,122 @@ def train_model(model: nn.Module,
         optimizer (torch.optim.Optimizer): the optimizer to use for training
         criterion (nn.Module): the loss function to use for training
         epochs (int): the number of epochs for training
+    
+    Returns: tuple
+        model (nn.Module): the optimized model
+        val_loss (float): the final validation loss
+        val_acc (float): the final validation accuracy
     """
-    return
+
+    # Create important placeholders
+    best_model_state_dict = None    # state_dict is far more efficient than a whole copy
+    best_loss = -1.0                # should never be negative (bootstraps nicely)
+    best_acc = -1.0                 # should never be negative (boostraps nicely)
+
+    # Need a dictionary to track historical values
+    history = {
+                'train_loss': [],
+                'train_acc': [],
+                'val_loss': [],
+                'val_acc': []}
+    
+    # begin...  The Training Loop
+
+    for epoch in range(epochs):
+        ###
+        # Training Phase
+        ###
+
+        model.train()
+
+        # Initialize Important Placeholders
+        train_loss = 0.0
+        train_correct = 0
+        train_total = 0
+
+        # process batches of training data
+        for i, (inputs, labels) in enumerate(train_loader):
+            # move data to the right device
+            inputs, labels = inputs.to(device), labels.to(device)
+
+            # zero-out the parameter gradients
+            optimizer.zero_grad()
+
+            outputs = model(inputs)             # forward pass (input -> model -> prediction)
+            loss = criterion(outputs, labels)   # calculate loss
+            loss.backward()                     # backward pass (calculate gradients based on loss)
+            optimizer.step()                    # update model parameters using calculated gradient
+
+            train_loss += loss.item()                                   # capture this loop's loss
+            max_value, predicted_class = torch.max(outputs.data, 1)     # get predicted label (highest value within row)
+            train_total += labels.size(0)                               # accumulate number of predictions
+            train_correct += (predicted_class == labels).sum().item()   # accumulate correct predictions
+        
+        # calculate key details of this epoch's training model (on training data)
+        train_loss /= len(train_loader)                 # calculate this epoch's average training loss
+        train_acc = 100 * (train_correct / train_total) # calculate this epoch's training accuracy
+
+        ###
+        # Validation Phase
+        ###
+
+        model.eval()
+
+        # initialize important placeholders
+        val_loss = 0.0
+        val_correct = 0
+        val_total = 0
+
+        # disable gradient calculation (no backwards pass for inference-only use)
+        with torch.no_grad():
+            # process batches of validation data
+            for inputs, labels in val_loader:
+                # move data to the right device
+                inputs, labels = inputs.to(device)
+
+                outputs = model(inputs)             # forward pass (input -> model -> prediction)
+                loss = criterion(outputs, labels)   # calculate loss
+
+                val_loss += loss.item()                                 # capture this loop's loss
+                max_value, predicted_class = torch.max(outputs.data, 1) # get predicted label (highest value within row)
+                val_total += labels.size(0)                             # accumulate number of predictions
+                val_correct += (predicted_class == labels).sum().item() # accumulate correct predictions
+            
+            # calculate key details of this epoch's training model (on validation data)
+            val_loss /= len(val_loader)                 # calculate this epoch's average validation loss
+            val_acc = 100 * (val_correct / val_total)   # calculate this epoch's validation accuracy
+        
+        # Report this epoch's critical metrics
+        print(f"Epoch [{epoch + 1} / {epoch}], "
+              f"Train Loss: {train_loss: .4f}, Train Acc. {train_acc: .2f}%, "
+              f"Val Loss: {val_loss: .4f}, Val Acc.: {val_acc: .2f}%")
+        
+        # Document this epoch's critical metrics
+        history['train_loss'].append(train_loss)
+        history['train_acc'].append(train_acc)
+        history['val_loss'].append(val_loss)
+        history['val_acc'].append(val_acc)
+
+        # Update placeholders if merited
+        if(val_acc > best_acc):
+            best_acc = val_acc
+            best_loss = val_loss
+            best_model_state_dict = model.state_dict()
+    
+    ###
+    # Training Loop Complete
+    ###
+
+    # just to be safe...  check for none 
+    if(best_model_state_dict is None):
+        print("Error: train_model() -- best_model_state_dict should not be None")
+        return (None, best_loss, best_acc)
+    else:
+        # create the expected tuple
+        tuple_toReturn = (
+                            model.load_state_dict(best_model_state_dict),
+                            best_loss,
+                            best_acc)
+        
+        # return the tuple
+        return tuple_toReturn 
