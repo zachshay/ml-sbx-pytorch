@@ -129,6 +129,22 @@ def load_data(batch_size: int,
             mean,
             std_dev)
 
-def train_model(model, device, train_loader, optimizer, epochs):
-    """common program to execute training loop"""
+def train_model(model: nn.Module,
+                device: torch.device,
+                train_loader: torch.utils.data.DataLoader,
+                val_loader: torch.utils.data.DataLoader,
+                optimizer: torch.optim.Optimizer,
+                criterion: nn.Module,
+                epochs: int) -> dict:
+    """Trains a PyTorch model and evaluates it on a validation set.
+
+    Args:
+        model (nn.Module): the PyTorch model to train
+        device (torch.device): the device used to train the model (e.g., 'cpu' or 'mps')
+        train_loader (DataLoader): DataLoader for the training set
+        val_loader (DataLoader): DataLoader for the validation set
+        optimizer (torch.optim.Optimizer): the optimizer to use for training
+        criterion (nn.Module): the loss function to use for training
+        epochs (int): the number of epochs for training
+    """
     return
