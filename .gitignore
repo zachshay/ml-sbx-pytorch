@@ -175,3 +175,6 @@ cython_debug/
 
 # Relevant Data Sets (don't replicate)
 data/
+
+# Ignore built models
+*.pth
