@@ -174,4 +174,4 @@ cython_debug/
 .DS_Store
 
 # Relevant Data Sets (don't replicate)
-data/mnist-*
+data/
