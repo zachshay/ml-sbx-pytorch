@@ -71,7 +71,7 @@ end_time = time.time()
 eleapsed_time = end_time - start_time
 
 # save the model to disk
-torch.save(model.state_dict(), "cnn_cpu.pth")
+torch.save(model.state_dict(), "cnn_gpu.pth")
 
 # print the final metrics
 print(f"Training run for CNN on GPU.")
