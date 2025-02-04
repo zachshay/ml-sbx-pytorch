@@ -1,5 +1,5 @@
 import torch
-from touchvision import datasets, transforms
+from torchvision import datasets, transforms
 
 def load_data(batch_size):
     """common program to load & transform data (MNIST)"""
