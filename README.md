@@ -1,5 +1,5 @@
 # ml-sbx-pytorch
-This is a personal sandbox used for various experiments with PyTorch.
+This is a personal sandbox used for various PyTorch experiments.
 
 Use Cases:
 * CNN via MNIST: classify images
