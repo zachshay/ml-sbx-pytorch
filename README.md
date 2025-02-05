@@ -3,7 +3,7 @@ This is a personal sandbox used for various experiements with PyTorch.
 
 Use Cases:
 * CNN via MNIST: classify images
-* RNN via IMDB: sentiment analysis `(currently working)`
+* RNN via IMDB: sentiment analysis `(current focus)`
 * RNN via *tbd*: forecast a weather attribute
 * Transformer via SST-2
 * Shootouts via Yelp: RNN vs. Transformer on sentiment analysis
