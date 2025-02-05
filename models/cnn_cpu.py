@@ -11,21 +11,25 @@ class CNN(nn.Module):
     # initialize the class
     def __init__(self):
         super(CNN, self).__init__()
-        # convolutional layers
+        # convolutional layer 1
         self.conv1 = nn.Conv2d(in_channels = 1, out_channels = 32, kernel_size = 3, padding = 1)
-        self.conv2 = nn.Conv2d(in_channels = 32, out_channels = 64, kernel_size = 3, padding = 1)
-        # pooling layers
+        # pooling layer 1
         self.pool = nn.MaxPool2d(kernel_size = 2, stride = 2)
-        # fully connected layers
-        self.fc1 = nn.Linear(in_features = self._calculate_flatten_size(), out_features = 128)
-        self.fc2 = nn.Linear(in_features = 128, out_features = 10)
+        # convolutional layer 2
+        self.conv2 = nn.Conv2d(in_channels = 32, out_channels = 64, kernel_size = 3, padding = 1)
+        # pooling layer 2
+        self.pool = nn.MaxPool2d(kernel_size = 2, stride = 2)
+        # fully connected layer
+        self.fc = nn.Linear(in_features = self._calculate_flatten_size(), out_features = 10)
     
     def _calculate_flatten_size(self):
         # create dummy input
         dummy_input = torch.randn(1, 1, 28, 28)
 
+        # pass through convolutions & pooling
         x = self.forward_features(dummy_input)
 
+        # flatten & return the size
         return x.view(-1).size(0)
     
     def forward_features(self, x):
@@ -38,13 +42,17 @@ class CNN(nn.Module):
     
     def forward(self, x):
         x = self.forward_features(x)
+        # print("Shape after forward_features():", x.shape)
+         
         x = x.view(x.size(0), -1)
-        x = F.relu(self.fc1(x))
+        # print("Shape after flattening:", x.shape)
+
+        x = self.fc(x)
+        # print("Shape after fc:", x.shape)
+
         x = F.dropout(x, p = 0.5, training = self.training)
-        x = self.fc2(x)
 
         return x
-
 # choose a device
 device = torch.device("cpu")
 
