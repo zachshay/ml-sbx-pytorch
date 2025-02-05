@@ -1,13 +1,24 @@
-# ml-project-mnist-1
-Learn PyTorch with MNIST (handwritten digits), and see the difference between training on cpu and traiing on gpu.  My laptop has an M2 Max chip with 32 GB of RAM; my accelerator is "mps."
+# ml-sbx-pytorch
+This is a personal sandbox used for various experiements with PyTorch:
+* CNN via MNIST: classify images
+* RNN via IMDB: sentiment analysis
+* RNN via <tbd>: forecast a weather attribute
+* Transformer via SST-2
+* Shootouts via Yelp: RNN vs. Transformer on sentiment analysis
 
-This repository hosts a variety of assets related to the above goal.
-* python code for model definitions
-* scripts providing various utility functions
-* integrate with tensorboard
+The root directory of this repo should include:
+* This README
+* Folders for each broad experiement
 
-TODO (no priority):
-* define more models (mlp; resnet8)
-* introduce cross validation
-* compare models in notebook
-* containerize best model, wrap with GUI, deploy on cloud
+
+Sub-Folders should include:
+* A README describing:
+    * Purpose
+    * Current State
+    * Completed Tasks
+    * Remaining Tasks
+* data: empty folder where data is downloaded
+* models: python code defining models
+* notebooks: more expressive medium for completed work *(tbd)*
+* runs: empty folder to hold TensorBoard logs
+* scripts: utility functions supporting model code
