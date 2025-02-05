@@ -1,7 +1,7 @@
 # ml-sbx-pytorch
 This is a personal sandbox used for various experiements with PyTorch:
 * CNN via MNIST: classify images
-* RNN via IMDB: sentiment analysis
+* RNN via IMDB: sentiment analysis `(currently working)`
 * RNN via <tbd>: forecast a weather attribute
 * Transformer via SST-2
 * Shootouts via Yelp: RNN vs. Transformer on sentiment analysis
@@ -9,7 +9,6 @@ This is a personal sandbox used for various experiements with PyTorch:
 The root directory of this repo should include:
 * This README
 * Folders for each broad experiement
-
 
 Sub-Folders should include:
 * A README describing:
