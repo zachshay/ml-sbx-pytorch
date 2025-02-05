@@ -61,8 +61,11 @@ criterion = nn.CrossEntropyLoss()
 # record the start time
 start_time = time.time()
 
+# set a log_dir
+log_dir = "runs/cnn_cpu_experiement"
+
 # train/optimize the model
-model, best_val_loss, best_val_acc = train_model(model, device, train_loader, val_loader, optimizer, criterion, epochs = 10)
+model, best_val_loss, best_val_acc = train_model(model, device, train_loader, val_loader, optimizer, criterion, 10, log_dir)
 
 # record the end time
 end_time = time.time()

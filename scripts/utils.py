@@ -7,6 +7,8 @@ import torch
 import torch.nn as nn
 
 from torch.utils.data import DataLoader, random_split
+from torch.utils.tensorboard import SummaryWriter
+
 from torchvision import datasets, transforms
 
 def load_data(batch_size: int,
@@ -159,7 +161,8 @@ def train_model(model: nn.Module,
                 val_loader: torch.utils.data.DataLoader,
                 optimizer: torch.optim.Optimizer,
                 criterion: nn.Module,
-                epochs: int) -> dict:
+                epochs: int,
+                log_dir: str) -> dict:
     """Trains a PyTorch model and evaluates it on a validation set.
 
     Args:
@@ -170,6 +173,7 @@ def train_model(model: nn.Module,
         optimizer (torch.optim.Optimizer): the optimizer to use for training
         criterion (nn.Module): the loss function to use for training
         epochs (int): the number of epochs for training
+        log_dir (str): the location to write experiement logs
     
     Returns: tuple
         model (nn.Module): the optimized model
@@ -181,6 +185,9 @@ def train_model(model: nn.Module,
     best_model_state_dict = None    # state_dict is far more efficient than a whole copy
     best_loss = -1.0                # should never be negative (bootstraps nicely)
     best_acc = -1.0                 # should never be negative (boostraps nicely)
+
+    # Create the tensorboard writer
+    writer = SummaryWriter(log_dir)
 
     # Need a dictionary to track historical values
     history = {
@@ -220,10 +227,17 @@ def train_model(model: nn.Module,
             max_value, predicted_class = torch.max(outputs.data, 1)     # get predicted label (highest value within row)
             train_total += labels.size(0)                               # accumulate number of predictions
             train_correct += (predicted_class == labels).sum().item()   # accumulate correct predictions
+
+            writer.add_scalar("Loss/train/batch", loss.item(), epoch * len(train_loader) + i)   # write batch data to tensorboard
         
         # calculate key details of this epoch's training model (on training data)
         train_loss /= len(train_loader)                 # calculate this epoch's average training loss
         train_acc = 100 * (train_correct / train_total) # calculate this epoch's training accuracy
+
+        # write epoch data to tensorboard
+        writer.add_scalar("Loss/train/epoch", train_loss, epoch)
+
+
 
         ###
         # Validation Phase
@@ -254,6 +268,10 @@ def train_model(model: nn.Module,
             # calculate key details of this epoch's training model (on validation data)
             val_loss /= len(val_loader)                 # calculate this epoch's average validation loss
             val_acc = 100 * (val_correct / val_total)   # calculate this epoch's validation accuracy
+
+            # Write validation data to tensorboard
+            writer.add_scalar("Loss/val", val_loss, epoch)
+            writer.add_scalar("Accuracy/val", val_acc, epoch)
         
         # Report this epoch's critical metrics
         print(f"Epoch [{epoch + 1} / {epochs}], "
@@ -275,6 +293,9 @@ def train_model(model: nn.Module,
     ###
     # Training Loop Complete
     ###
+
+    # Close the SummaryWriter
+    writer.close()
 
     # just to be safe...  check for none 
     if(best_model_state_dict is None):
