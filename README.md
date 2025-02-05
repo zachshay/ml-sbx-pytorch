@@ -1,12 +1,13 @@
 # ml-project-mnist-1
-Compare and contrast implementing MNIST models with and without accelerators (e.g., gpu)
+Learn PyTorch with MNIST (handwritten digits), and see the difference between training on cpu and traiing on gpu.  My laptop has an M2 Max chip with 32 GB of RAM; my accelerator is "mps."
 
 This repository hosts a variety of assets related to the above goal.
 * python code for model definitions
-* jupyter notebooks detailing how models were tuned
 * scripts providing various utility functions
-* additional assets for the containerization & orchestration of workloads
+* integrate with tensorboard
 
-Important Notes:
-* Accelerated training will leverage my local laptop's resources (i.e., Apple Silicon)
-* Depending on cost estimates, I will enhance this code to leverage containers & cloud infrastructure
+TODO (no priority):
+* define more models (mlp; resnet8)
+* introduce cross validation
+* compare models in notebook
+* containerize best model, wrap with GUI, deploy on cloud
