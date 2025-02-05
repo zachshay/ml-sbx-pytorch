@@ -178,3 +178,6 @@ data/
 
 # Ignore built models
 *.pth
+
+# Ignore tensorboard runs
+runs/
